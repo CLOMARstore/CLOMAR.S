@@ -1,0 +1,306 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>CLOMAR STORE — Tienda</title>
+  <meta name="description" content="CLOMAR STORE - Catálogo de joyas, ropa, relojes y accesorios" />
+  <style>
+    /* Reset & base */
+    :root{--accent:#6b21a8;--muted:#6b7280;--bg:#f7f7fb;--card:#ffffff}
+    *{box-sizing:border-box;margin:0;padding:0}
+    html,body{height:100%;font-family:Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;color:#111;background:var(--bg)}
+    a{color:inherit;text-decoration:none}
+    img{max-width:100%;display:block}
+
+    /* Layout */
+    .container{max-width:1100px;margin:0 auto;padding:16px}
+    header{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 0}
+    .brand{display:flex;align-items:center;gap:10px}
+    .brand .logo{width:44px;height:44px;border-radius:8px;background:linear-gradient(135deg,var(--accent),#9f7aea);display:flex;align-items:center;justify-content:center;color:white;font-weight:700}
+    nav{display:flex;gap:8px;align-items:center}
+    .search{flex:1;display:flex}
+    .search input{flex:1;padding:10px 12px;border-radius:10px;border:1px solid #e6e7ee}
+    .icon-btn{background:transparent;border:none;padding:8px;border-radius:8px}
+
+    /* Mobile nav */
+    .mobile-only{display:none}
+    .desktop-only{display:flex}
+
+    /* Grid */
+    .controls{display:flex;gap:8px;align-items:center;margin:14px 0}
+    .categories{display:flex;gap:8px;flex-wrap:wrap}
+    .cat{padding:8px 12px;background:var(--card);border-radius:999px;border:1px solid #ececf6;font-size:14px}
+    .products-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+    .card{background:var(--card);border-radius:12px;padding:12px;box-shadow:0 6px 16px rgba(16,24,40,0.04)}
+    .card .title{font-weight:600;margin:8px 0}
+    .price{font-weight:700;color:var(--accent)}
+
+    /* Cart drawer */
+    .cart-btn{position:relative}
+    .cart-count{position:absolute;right:6px;top:6px;background:#ef4444;color:white;border-radius:999px;padding:2px 6px;font-size:12px}
+    .drawer{position:fixed;right:0;top:0;height:100vh;width:360px;max-width:95vw;background:var(--card);box-shadow:-10px 0 30px rgba(2,6,23,0.2);transform:translateX(110%);transition:transform .25s ease-in-out;padding:16px;z-index:60}
+    .drawer.open{transform:translateX(0)}
+
+    /* Footer */
+    footer{margin-top:24px;padding:16px 0;color:var(--muted);text-align:center}
+
+    /* Responsive */
+    @media (max-width:900px){
+      .products-grid{grid-template-columns:repeat(2,1fr)}
+    }
+    @media (max-width:600px){
+      .desktop-only{display:none}
+      .mobile-only{display:flex}
+      .products-grid{grid-template-columns:1fr}
+      .search{display:none}
+    }
+
+    /* Buttons */
+    .btn{background:var(--accent);color:white;padding:8px 12px;border-radius:10px;border:none;cursor:pointer}
+    .btn.ghost{background:transparent;color:var(--accent);border:1px solid #eadcff}
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="brand">
+        <div class="logo">CS</div>
+        <div>
+          <div style="font-weight:700">CLOMAR STORE</div>
+          <div style="font-size:12px;color:var(--muted)">Tienda móvil y web</div>
+        </div>
+      </div>
+
+      <div class="search desktop-only" style="max-width:540px">
+        <input id="searchInput" placeholder="Buscar productos, ejemplo: reloj o camisa" />
+      </div>
+
+      <nav>
+        <button class="icon-btn mobile-only" id="menuBtn">☰</button>
+        <div class="desktop-only">
+          <button class="icon-btn" id="favoritesBtn" title="Favoritos">❤</button>
+          <button class="icon-btn cart-btn" id="cartBtn" title="Carrito">🛒 <span id="cartCount" class="cart-count" style="display:none">0</span></button>
+        </div>
+        <div class="mobile-only">
+          <button class="icon-btn" id="cartBtnMobile">🛒</button>
+        </div>
+      </nav>
+    </header>
+
+    <section class="controls">
+      <div class="categories" id="categories">
+        <!-- categories inserted here -->
+      </div>
+      <div style="margin-left:auto;display:flex;gap:8px">
+        <select id="sortSelect" class="cat">
+          <option value="default">Orden: Recomendado</option>
+          <option value="price-asc">Precio: menor a mayor</option>
+          <option value="price-desc">Precio: mayor a menor</option>
+        </select>
+        <button class="btn" id="clearFilter">Limpiar</button>
+      </div>
+    </section>
+
+    <main>
+      <section id="products" class="products-grid">
+        <!-- productos generados dinámicamente -->
+      </section>
+
+      <div id="emptyMsg" style="display:none;padding:20px;text-align:center;color:var(--muted)">No se encontraron productos.</div>
+    </main>
+
+    <footer>
+      © <span id="year"></span> CLOMAR STORE — Atención desde el celular. Desarrollado por ti.
+    </footer>
+  </div>
+
+  <!-- Cart drawer -->
+  <aside id="cartDrawer" class="drawer" aria-hidden="true">
+    <h3>Carrito</h3>
+    <div id="cartList" style="margin-top:12px;display:flex;flex-direction:column;gap:12px;max-height:60vh;overflow:auto"></div>
+    <div style="margin-top:16px;display:flex;justify-content:space-between;align-items:center">
+      <div>
+        <div style="font-size:14px;color:var(--muted)">Total</div>
+        <div id="cartTotal" style="font-weight:800;font-size:18px">S/ 0.00</div>
+      </div>
+      <div style="display:flex;gap:8px">
+        <button class="btn" id="checkoutBtn">Pagar</button>
+        <button class="btn ghost" id="closeCart">Cerrar</button>
+      </div>
+    </div>
+  </aside>
+
+  <script>
+    // Datos de ejemplo — reemplaza por tu propio catálogo
+    const PRODUCTS = [
+      { id: 'j1', title: 'Collar Dorado - Elegance', price: 120.00, category: 'Joyas', img: '' },
+      { id: 'j2', title: 'Aretes Perla', price: 45.00, category: 'Joyas', img: '' },
+      { id: 'r1', title: 'Camisa Casual Hombre', price: 65.50, category: 'Ropa', img: '' },
+      { id: 'r2', title: 'Pantalón Chino', price: 89.90, category: 'Pantalones', img: '' },
+      { id: 'r3', title: 'Boxer Cotton Pack x3', price: 29.00, category: 'Calzoncillos', img: '' },
+      { id: 'w1', title: 'Reloj Classic', price: 250.00, category: 'Relojes', img: '' },
+      { id: 'a1', title: 'Gafas de Sol Retro', price: 75.00, category: 'Accesorios', img: '' },
+      { id: 'r4', title: 'Camisa Formal Mujer', price: 79.99, category: 'Camisas', img: '' }
+    ];
+
+    // Inicialización
+    const categories = Array.from(new Set(PRODUCTS.map(p=>p.category)));
+    const productsEl = document.getElementById('products');
+    const categoriesEl = document.getElementById('categories');
+    const searchInput = document.getElementById('searchInput');
+    const sortSelect = document.getElementById('sortSelect');
+    const clearFilter = document.getElementById('clearFilter');
+    const cartBtn = document.getElementById('cartBtn');
+    const cartBtnMobile = document.getElementById('cartBtnMobile');
+    const cartDrawer = document.getElementById('cartDrawer');
+    const cartList = document.getElementById('cartList');
+    const cartTotal = document.getElementById('cartTotal');
+    const cartCount = document.getElementById('cartCount');
+    const closeCart = document.getElementById('closeCart');
+    const checkoutBtn = document.getElementById('checkoutBtn');
+    const yearEl = document.getElementById('year');
+    yearEl.textContent = new Date().getFullYear();
+
+    // Rellenar categorías
+    function renderCategories(){
+      categoriesEl.innerHTML = '';
+      const allBtn = document.createElement('button');
+      allBtn.className = 'cat';
+      allBtn.textContent = 'Todos';
+      allBtn.onclick = ()=>{filterAndRender()}
+      categoriesEl.appendChild(allBtn);
+      categories.forEach(cat=>{
+        const b = document.createElement('button');
+        b.className = 'cat';
+        b.textContent = cat;
+        b.onclick = ()=>{filterAndRender(cat)};
+        categoriesEl.appendChild(b);
+      })
+    }
+
+    // Render de productos
+    function currency(v){return 'S/ '+v.toFixed(2)}
+    function renderProducts(list){
+      productsEl.innerHTML = '';
+      if(!list.length){document.getElementById('emptyMsg').style.display='block'; return}
+      document.getElementById('emptyMsg').style.display='none';
+      list.forEach(p=>{
+        const card = document.createElement('article');
+        card.className = 'card';
+        card.innerHTML = `
+          <div style="height:160px;background:linear-gradient(180deg,#fff,#faf5ff);display:flex;align-items:center;justify-content:center;border-radius:8px"> <div style="font-size:12px;color:var(--muted)">Imagen</div></div>
+          <div class="title">${p.title}</div>
+          <div style="display:flex;justify-content:space-between;align-items:center">
+            <div class="price">${currency(p.price)}</div>
+            <div>
+              <button class="btn" data-id="${p.id}">Agregar</button>
+            </div>
+          </div>
+        `;
+        productsEl.appendChild(card);
+      })
+
+      // attach add buttons
+      document.querySelectorAll('.card .btn').forEach(b=>{
+        b.addEventListener('click', ()=>{addToCart(b.dataset.id)})
+      })
+    }
+
+    // Filtrado y orden
+    function filterAndRender(category, query){
+      let list = PRODUCTS.slice();
+      if(category){list = list.filter(p=>p.category===category)}
+      const q = (query || searchInput?.value || '').trim().toLowerCase();
+      if(q){list = list.filter(p=> (p.title||'').toLowerCase().includes(q) || (p.category||'').toLowerCase().includes(q))}
+      const sort = sortSelect?.value;
+      if(sort==='price-asc') list.sort((a,b)=>a.price-b.price);
+      else if(sort==='price-desc') list.sort((a,b)=>b.price-a.price);
+      renderProducts(list);
+    }
+
+    // --- Carrito (localStorage) ---
+    function getCart(){try{return JSON.parse(localStorage.getItem('clomar_cart')||'[]')}catch(e){return []}}
+    function saveCart(c){localStorage.setItem('clomar_cart',JSON.stringify(c));renderCart()}
+    function addToCart(id){
+      const p = PRODUCTS.find(x=>x.id===id); if(!p)return;
+      const cart = getCart();
+      const item = cart.find(i=>i.id===id);
+      if(item){item.qty++} else {cart.push({id:p.id,title:p.title,price:p.price,qty:1})}
+      saveCart(cart);
+      showCartDrawer();
+    }
+    function removeFromCart(id){const cart=getCart().filter(i=>i.id!==id);saveCart(cart)}
+    function changeQty(id,qty){const cart=getCart();const it=cart.find(i=>i.id===id);if(!it) return;it.qty=qty; if(it.qty<1) removeFromCart(id); else saveCart(cart)}
+    function clearCart(){localStorage.removeItem('clomar_cart');renderCart()}
+
+    function renderCart(){
+      const cart = getCart();
+      cartList.innerHTML = '';
+      if(!cart.length){cartList.innerHTML = '<div style="color:var(--muted)">Tu carrito está vacío.</div>'}
+      let total = 0; let count = 0;
+      cart.forEach(i=>{
+        total += i.price * i.qty; count += i.qty;
+        const el = document.createElement('div');
+        el.style.display='flex';el.style.justifyContent='space-between';el.style.alignItems='center';
+        el.innerHTML = `
+          <div style="flex:1">
+            <div style="font-weight:600">${i.title}</div>
+            <div style="font-size:13px;color:var(--muted)">S/ ${i.price.toFixed(2)} x ${i.qty}</div>
+          </div>
+          <div style="display:flex;gap:6px;align-items:center">
+            <button class="cat" data-id="${i.id}" data-action="minus">-</button>
+            <div style="min-width:22px;text-align:center">${i.qty}</div>
+            <button class="cat" data-id="${i.id}" data-action="plus">+</button>
+            <button class="cat" data-id="${i.id}" data-action="del">Eliminar</button>
+          </div>
+        `;
+        cartList.appendChild(el);
+      })
+      cartTotal.textContent = currency(total);
+      if(count>0){cartCount.style.display='inline-block';cartCount.textContent=count}else{cartCount.style.display='none'}
+
+      // attach cart control events
+      cartList.querySelectorAll('button[data-action]').forEach(btn=>{
+        btn.addEventListener('click', ()=>{
+          const id = btn.dataset.id; const action = btn.dataset.action;
+          const c = getCart(); const it = c.find(x=>x.id===id);
+          if(!it) return;
+          if(action==='plus') changeQty(id, it.qty+1);
+          else if(action==='minus') changeQty(id, it.qty-1);
+          else if(action==='del') removeFromCart(id);
+        })
+      })
+    }
+
+    // Drawer controls
+    function showCartDrawer(){cartDrawer.classList.add('open');cartDrawer.setAttribute('aria-hidden','false');renderCart()}
+    function hideCartDrawer(){cartDrawer.classList.remove('open');cartDrawer.setAttribute('aria-hidden','true')}
+
+    // Events
+    document.addEventListener('DOMContentLoaded', ()=>{
+      renderCategories(); filterAndRender(); renderCart();
+      // search
+      if(searchInput){searchInput.addEventListener('input', ()=>filterAndRender(null, searchInput.value))}
+      sortSelect.addEventListener('change', ()=>filterAndRender());
+      clearFilter.addEventListener('click', ()=>{searchInput.value=''; sortSelect.value='default'; filterAndRender()});
+
+      cartBtn.addEventListener('click', showCartDrawer);
+      if(cartBtnMobile) cartBtnMobile.addEventListener('click', showCartDrawer);
+      closeCart.addEventListener('click', hideCartDrawer);
+      checkoutBtn.addEventListener('click', ()=>{
+        const cart = getCart(); if(!cart.length){alert('Tu carrito está vacío');return}
+        // Aquí integrar gateway de pago o procesar pedido
+        const summary = cart.map(i=>`${i.title} x${i.qty}`).join('\n');
+        alert('Simulación de pago:\n'+summary+'\nTotal: '+cartTotal.textContent+'\n\nA continuación implementa tu pasarela de pago (MercadoPago, Culqi, PayPal, etc.)');
+      });
+
+    });
+
+    // helper: open/close mobile menu (placeholder)
+    document.getElementById('menuBtn')?.addEventListener('click', ()=>{alert('Menú móvil - aquí puedes agregar enlaces a categorías y a tu contacto')});
+
+  </script>
+
+</body>
+</html>
