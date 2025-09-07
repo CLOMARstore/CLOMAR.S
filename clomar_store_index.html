@@ -8,7 +8,7 @@
   <!-- 🔥 Bloque antiversión vieja -->
 <script>
   (function(){
-    const VERSION = "v1.0.2"; // ⬅️ cambia este número en cada actualización
+    const VERSION = "v1.0.3"; // ⬅️ cambia este número en cada actualización
     const saved = localStorage.getItem("clomar_version");
     if(saved !== VERSION){
       localStorage.setItem("clomar_version", VERSION);
@@ -204,12 +204,24 @@
 
   <script>
     const PRODUCTS = [
-      { id: 'j1', title: 'Collar Dorado - Elegance', price: 120.00, category: 'Joyas', img: 'images/collar.jpg' },
-      { id: 'j2', title: 'Aretes Perla', price: 45.00, category: 'Joyas', img: 'images/aretes.png' },
-      { id: 'r1', title: 'Camisa Casual Hombre', price: 65.50, category: 'Ropa', img: 'images/camisa.jpg' },
-      { id: 'r2', title: 'Pantalón Chino', price: 89.90, category: 'Pantalones', img: 'images/pantalon1.jpg' },
-      { id: 'w1', title: 'Reloj Classic', price: 250.00, category: 'Relojes', img: 'images/reloj1.png' },
-      { id: 'a1', title: 'Gafas de Sol Retro', price: 75.00, category: 'Accesorios', img: 'images/gafas.jpg' }
+    { id: 'j1', title: 'Collar Dorado - Elegance', price: 120.00, category: 'Joyas', img: 'images/collar.jpg' },
+    { id: 'j2', title: 'Aretes Perla', price: 45.00, category: 'Joyas', img: 'images/aretes.png' },
+    { id: 'j3', title: 'Pulsera Plata Minimal', price: 60.00, category: 'Joyas', img: 'images/pulsera.jpg' },
+    { id: 'j4', title: 'Anillo Zafiro Azul', price: 150.00, category: 'Joyas', img: 'images/anillo.jpg' },
+
+    { id: 'r1', title: 'Camisa Casual Hombre', price: 65.50, category: 'Ropa', img: 'images/camisa.jpg' },
+    { id: 'r2', title: 'Pantalón Chino', price: 89.90, category: 'Pantalones', img: 'images/pantalon1.jpg' },
+    { id: 'r3', title: 'Vestido Elegante', price: 130.00, category: 'Ropa', img: 'images/vestido.jpg' },
+    { id: 'r4', title: 'Chaqueta de Cuero', price: 220.00, category: 'Ropa', img: 'images/chaqueta.jpg' },
+
+    { id: 'w1', title: 'Reloj Classic', price: 250.00, category: 'Relojes', img: 'images/reloj1.png' },
+    { id: 'w2', title: 'Reloj Deportivo', price: 310.00, category: 'Relojes', img: 'images/reloj2.jpg' },
+    { id: 'w3', title: 'Reloj Smartwatch', price: 450.00, category: 'Relojes', img: 'images/smartwatch.jpg' },
+
+    { id: 'a1', title: 'Gafas de Sol Retro', price: 75.00, category: 'Accesorios', img: 'images/gafas.jpg' },
+    { id: 'a2', title: 'Cinturón Cuero Premium', price: 95.00, category: 'Accesorios', img: 'images/cinturon.jpg' },
+    { id: 'a3', title: 'Bolso de Mano', price: 180.00, category: 'Accesorios', img: 'images/bolso.jpg' },
+    { id: 'a4', title: 'Gorra Urbana', price: 40.00, category: 'Accesorios', img: 'images/gorra.jpg' }
     ];
 
     const categories = Array.from(new Set(PRODUCTS.map(p=>p.category)));
