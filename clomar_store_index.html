@@ -188,9 +188,23 @@
       list.forEach(p=>{
         const card = document.createElement('article');
         card.className = 'card';
-        card.innerHTML = `
-          <div style="height:160px;background:linear-gradient(180deg,#fff,#faf5ff);display:flex;align-items:center;justify-content:center;border-radius:8px"> <div style="font-size:12px;color:var(--muted)">Imagen</div></div>
-          <div class="title">${p.title}</div>
+       const imageHTML = p.img
+  ? `<img src="${p.img}" alt="${p.title}" style="height:160px;object-fit:contain;border-radius:8px;width:100%" />`
+  : `<div style="height:160px;background:linear-gradient(180deg,#fff,#faf5ff);display:flex;align-items:center;justify-content:center;border-radius:8px">
+       <div style="font-size:12px;color:var(--muted)">Sin imagen</div>
+     </div>`;
+
+card.innerHTML = `
+  ${imageHTML}
+  <div class="title">${p.title}</div>
+  <div style="display:flex;justify-content:space-between;align-items:center">
+    <div class="price">${currency(p.price)}</div>
+    <div>
+      <button class="btn" data-id="${p.id}">Agregar</button>
+    </div>
+  </div>
+`;
+
           <div style="display:flex;justify-content:space-between;align-items:center">
             <div class="price">${currency(p.price)}</div>
             <div>
