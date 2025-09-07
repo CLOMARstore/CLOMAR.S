@@ -5,6 +5,23 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>CLOMAR STORE — Tienda</title>
   <meta name="description" content="CLOMAR STORE - Catálogo de joyas, ropa, relojes y accesorios" />
+  <!-- 🔥 Bloque antiversión vieja -->
+<script>
+  (function(){
+    const VERSION = "v1.0.1"; // ⬅️ cambia este número en cada actualización
+    const saved = localStorage.getItem("clomar_version");
+    if(saved !== VERSION){
+      localStorage.setItem("clomar_version", VERSION);
+      if(saved !== null){
+        console.log("⚡ Nueva versión detectada, limpiando caché...");
+        caches.keys().then(keys => keys.forEach(k => caches.delete(k))); // borra caches
+        localStorage.clear(); // limpia datos viejos
+        sessionStorage.clear();
+        location.reload(true); // recarga forzada
+      }
+    }
+  })();
+</script>
   <style>
     /* Reset & base */
     :root {
